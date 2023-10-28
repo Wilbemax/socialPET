@@ -1,4 +1,7 @@
 import React from "react";
+import { Link } from "react-router-dom";
+import { useDispatch } from "react-redux";
+
 import clsx from "clsx";
 import IconButton from "@mui/material/IconButton";
 import DeleteIcon from "@mui/icons-material/Clear";
@@ -9,6 +12,7 @@ import CommentIcon from "@mui/icons-material/ChatBubbleOutlineOutlined";
 import styles from "./Post.module.scss";
 import { UserInfo } from "../UserInfo";
 import { PostSkeleton } from "./Skeleton";
+import { fetchRemovePost } from "../../redux/slices/posts";
 
 export const Post = ({
   id,
@@ -23,20 +27,29 @@ export const Post = ({
   isFullPost,
   isLoading,
   isEditable,
+
 }) => {
+  const dispatch = useDispatch();
+
   if (isLoading) {
     return <PostSkeleton />;
+  }
+
+  const onClickRemove = () =>{
+    if (window.confirm("Вы действительно хотите удалить пост?")) {
+    dispatch(fetchRemovePost(id))
+    }
   }
 
   return (
     <div className={clsx(styles.root, { [styles.rootFull]: isFullPost })}>
       {isEditable && (
         <div className={styles.editButtons}>
-          <IconButton color="primary">
+          <IconButton elevation={0} color="primary">
             <EditIcon />
           </IconButton>
-          <IconButton color="secondary">
-            <DeleteIcon />
+          <IconButton elevation={0}  onClick={onClickRemove} color="secondary">
+            <DeleteIcon/>
           </IconButton>
         </div>
       )}
@@ -51,12 +64,12 @@ export const Post = ({
           <h2
             className={clsx(styles.title, { [styles.titleFull]: isFullPost })}
           >
-            {isFullPost ? title : <a href={`/posts/${id}`}>{title}</a>}
+            {isFullPost ? title : <Link to={`/posts/${id}`}>{title}</Link>}
           </h2>
           <ul className={styles.tags}>
             {tags.map((name) => (
               <li key={name}>
-                <a href={`/tag/${name}`}>#{name}</a>
+                <Link to={`/tag/${name}`}>#{name}</Link>
               </li>
             ))}
           </ul>
