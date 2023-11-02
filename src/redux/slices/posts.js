@@ -10,21 +10,23 @@ export const fetchTags = createAsyncThunk("posts/fetchTags", async () => {
   const { data } = await axios.get("/tags");
   return data;
 });
-export const fetchRemovePost = createAsyncThunk(
-  "posts/fetchTags",
-  async (id) => {
-    const { data } = await axios.delete(`/posts/${id}`);
-    return data;
-  }
-);
+export const fetchRemovePost = createAsyncThunk("posts/remove", async (id) => {
+  const { data } = await axios.delete(`/posts/${id}`);
+  return data;
+});
+
+export const fetchEaditPosts = createAsyncThunk("posts/eaditPosts", async (id) => {
+  const { data } = await axios.patch(`/posts/${id}`);
+  return data;
+});
 
 const initialState = {
   posts: {
-    item: [],
+    items: [],
     status: "loading",
   },
   tags: {
-    item: [],
+    items: [],
     status: "loading",
   },
 };
@@ -35,11 +37,11 @@ const postsSlice = createSlice({
   reducers: {},
   extraReducers: {
     [fetchPosts.pending]: (state) => {
-      state.posts.item = [];
+      state.posts.items = [];
       state.posts.status = "loading";
     },
     [fetchPosts.fulfilled]: (state, action) => {
-      state.posts.item = action.payload;
+      state.posts.items = action.payload;
       state.posts.status = "loaded";
     },
     [fetchPosts.rejected]: (state) => {
@@ -54,12 +56,14 @@ const postsSlice = createSlice({
       state.tags.items = action.payload;
       state.tags.status = "loaded";
     },
-    [fetchTags.rejected]: (state, action) => {
+    [fetchTags.rejected]: (state) => {
       state.tags.items = [];
       state.tags.status = "error";
     },
     [fetchRemovePost.pending]: (state, action) => {
-      state.posts.items = state.posts.item.filter((obj) => obj._id !== action.meta.arg);
+      state.posts.items = state.posts.items.filter(
+        (obj) => obj._id !== action.meta.arg
+      );
       state.posts.status = "loaded";
     },
   },

@@ -19,6 +19,7 @@ export const FullPost = () => {
       .then((res) => {
         setData(res.data);
         setLoading(false);
+        debugger
       })
       .catch((err) => {
         console.warn(err);
@@ -26,45 +27,47 @@ export const FullPost = () => {
       });
   }, []);
 
+  // React.useEffect(() => {
+  //   setLoading(true);
+  //   debugger
+  //   axios
+  //     .get(`post/${id}/coment`)
+  //     .then((res) => {
+  //       setData((prevData) => ({ ...prevData, comment: res.data }));
+  //       setLoading(false);
+  //     })
+  //     .catch((err) => {
+  //       console.log(err);
+  //       alert("Ошибка при получении комментариев");
+  //     });
+  // }, [data.comment]);
+
+  debugger
+
+  console.log(data);
+
   if (isLoading) {
     return <Post isLoading={isLoading} isFullPost />;
   }
 
+  console.log(data);
   return (
     <>
       <Post
         id={data._id}
         title={data.title}
-        imageUrl={data.imageUrl ? `http://localhost:8887${data.imageUrl}` : ''}
+        imageUrl={data.imageUrl ? `http://localhost:8887${data.imageUrl}` : ""}
         user={data.user}
         createdAt={data.createdAt}
         viewsCount={data.viewCount}
-        commentsCount={3}
+        commentsCount={data.comment.length}
         tags={data.tags}
         isFullPost
       >
         <ReactMarkdown children={data.text} />{" "}
       </Post>
-      <CommentsBlock
-        items={[
-          {
-            user: {
-              fullName: "Вася Пупкин",
-              avatarUrl: "https://mui.com/static/images/avatar/1.jpg",
-            },
-            text: "Это тестовый комментарий 555555",
-          },
-          {
-            user: {
-              fullName: "Иван Иванов",
-              avatarUrl: "https://mui.com/static/images/avatar/2.jpg",
-            },
-            text: "When displaying three lines or more, the avatar is not aligned at the top. You should set the prop to align the avatar at the top",
-          },
-        ]}
-        isLoading={false}
-      >
-        <Index />
+      <CommentsBlock comment={data.comment} isLoading={false}>
+        <Index id={data._id} user={data.user} />
       </CommentsBlock>
     </>
   );

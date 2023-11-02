@@ -21,14 +21,14 @@ export const Registration = () => {
     formState: { errors, isValid },
   } = useForm({
     defaultValues: {
-      fullName: "Вася пупкин",
-      email: "vasya@yandex.ru",
-      password: "1234",
+      fullName: "",
+      email: "",
+      password: "",
     },
     mode: "onChange",
   });
 
-  const onSubmit = async (values) => {
+  const onSubmit = async(values) => {
     const data = await dispatch(fetchRegister(values));
 
     if (!data.payload) {

@@ -1,5 +1,6 @@
 import React from "react";
 
+import AltAva from "../assets/ava.jpg"
 import { SideBlock } from "./SideBlock";
 import ListItem from "@mui/material/ListItem";
 import ListItemAvatar from "@mui/material/ListItemAvatar";
@@ -9,18 +10,21 @@ import Divider from "@mui/material/Divider";
 import List from "@mui/material/List";
 import Skeleton from "@mui/material/Skeleton";
 
-export const CommentsBlock = ({ items, children, isLoading = true }) => {
+export const CommentsBlock = ({comment, children, isLoading = true }) => {
+  
+
+  
   return (
     <SideBlock title="Комментарии">
       <List>
-        {(isLoading ? [...Array(5)] : items).map((obj, index) => (
+        {comment.length === 0 ? ('') : ((isLoading ? [...Array(5)] : comment).map((obj, index) => (
           <React.Fragment key={index}>
             <ListItem alignItems="flex-start">
               <ListItemAvatar>
                 {isLoading ? (
                   <Skeleton variant="circular" width={40} height={40} />
                 ) : (
-                  <Avatar alt={obj.user.fullName} src={obj.user.avatarUrl} />
+                  <Avatar alt={AltAva} src={obj.user.avatarUrl} />
                 )}
               </ListItemAvatar>
               {isLoading ? (
@@ -31,13 +35,13 @@ export const CommentsBlock = ({ items, children, isLoading = true }) => {
               ) : (
                 <ListItemText
                   primary={obj.user.fullName}
-                  secondary={obj.text}
+                  secondary={obj.commentText}
                 />
               )}
             </ListItem>
             <Divider variant="inset" component="li" />
           </React.Fragment>
-        ))}
+        )))}
       </List>
       {children}
     </SideBlock>

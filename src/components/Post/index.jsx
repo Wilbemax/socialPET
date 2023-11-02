@@ -26,38 +26,45 @@ export const Post = ({
   children,
   isFullPost,
   isLoading,
-  isEditable,
-
-}) => {
+  isEditable}) => {
   const dispatch = useDispatch();
-
   if (isLoading) {
     return <PostSkeleton />;
   }
+  debugger
 
-  const onClickRemove = () =>{
+ 
+
+  const onClickRemove = () => {
     if (window.confirm("Вы действительно хотите удалить пост?")) {
-    dispatch(fetchRemovePost(id))
+      dispatch(fetchRemovePost(id));
     }
-  }
+  };
 
   return (
     <div className={clsx(styles.root, { [styles.rootFull]: isFullPost })}>
       {isEditable && (
         <div className={styles.editButtons}>
+          <Link to={`/posts/${id}/edit`}>
           <IconButton elevation={0} color="primary">
             <EditIcon />
           </IconButton>
-          <IconButton elevation={0}  onClick={onClickRemove} color="secondary">
-            <DeleteIcon/>
+          </Link>
+          <IconButton elevation={0} onClick={onClickRemove} color="secondary">
+            <DeleteIcon />
           </IconButton>
         </div>
       )}
-      <img
-        className={clsx(styles.image, { [styles.imageFull]: isFullPost })}
-        src={imageUrl}
-        alt={title}
-      />
+      <div>
+        {imageUrl ? (
+          <img
+            className={clsx(styles.image, { [styles.imageFull]: isFullPost })}
+            src={imageUrl}
+          />
+        ) : (
+          ""
+        )}
+      </div>
       <div className={styles.wrapper}>
         <UserInfo {...user} additionalText={createdAt} />
         <div className={styles.indention}>
@@ -68,6 +75,7 @@ export const Post = ({
           </h2>
           <ul className={styles.tags}>
             {tags.map((name) => (
+              
               <li key={name}>
                 <Link to={`/tag/${name}`}>#{name}</Link>
               </li>

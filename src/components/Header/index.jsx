@@ -19,7 +19,7 @@ export const Header = () => {
     }
   };
 
-  console.log(isAuth);
+
 
   return (
     <div className={styles.root}>

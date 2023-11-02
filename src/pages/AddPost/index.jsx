@@ -9,9 +9,10 @@ import axios from "../../axios";
 
 import "easymde/dist/easymde.min.css";
 import styles from "./AddPost.module.scss";
-import { useNavigate, Navigate } from "react-router-dom";
+import { useNavigate, Navigate, useParams } from "react-router-dom";
 
 export const AddPost = () => {
+  const {id}  = useParams()
   const navigate = useNavigate();
   const isAuth = useSelector(selectIsAuth);
 
@@ -21,6 +22,8 @@ export const AddPost = () => {
   const [imageUrl, setImageUrl] = React.useState("");
   const [title, setTitle] = React.useState("");
   const imputFileRef = React.useRef(null);
+
+  const isEditing = Boolean(id)
 
   const onClickRemoveImage = () => {
     setImageUrl("");
@@ -42,6 +45,7 @@ export const AddPost = () => {
 
   const onChange = React.useCallback((value) => {
     setText(value);
+    console.log(value);
   }, []);
 
   const onSubmit = async () => {
@@ -55,16 +59,28 @@ export const AddPost = () => {
       };
       console.log(fields);
 
-      const { data } = await axios.post("/posts", fields);
+      const { data } = isEditing ? await axios.patch(`/posts/${id}`, fields) :await axios.post("/posts", fields);
 
       console.log(data);
-      const id = data._id;
-      navigate(`/posts/${id}`);
+      const _id = isEditing ? id : data._id;
+      navigate(`/posts/${_id}`);
     } catch (err) {
       console.warn(err);
       alert("Ошибка при загрузке статьи");
     }
   };
+
+  React.useEffect(() =>{
+    if(id){
+      axios.get(`/posts/${id}`).then(
+        ({data})=>{
+        setTitle(data.title)
+        setText(data.text)
+        setImageUrl(data.imageUrl)
+        setTags(data.tags.split(","))
+      })
+    }
+  })
 
   const options = React.useMemo(
     () => ({
@@ -87,11 +103,13 @@ export const AddPost = () => {
 
   return (
     <Paper elevation={0} style={{ padding: 30 }}>
+      <div></div>
       <Button
         onClick={() => imputFileRef.current.click()}
         variant="outlined"
         size="large"
         elevation={0}
+        sx={{mr: 2}}
       >
         Загрузить превью
       </Button>
@@ -111,6 +129,7 @@ export const AddPost = () => {
             variant="contained"
             color="error"
             size="large"
+            sx={{mr: 2}}
           >
             Удалить
           </Button>
@@ -157,7 +176,7 @@ export const AddPost = () => {
           size="large"
           variant="contained"
         >
-          Опубликовать
+          {isEditing ? 'Сохранить':"Отправить"}
         </Button>
         <Button elevation={0} size="large">
           Отмена
